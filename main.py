@@ -1,33 +1,35 @@
-from config import TOKEN_API
 import asyncio
-from log import my_logger
+from configs import config_logger
 import logging
 from aiogram import Bot, Dispatcher, types
-from aiogram.filters.command import Command
-
+from configs.config_reader import config
+from handlers import questions, different_types
+# from my_package1 import package1
 
 # Включаем логирование, чтобы не пропустить важные сообщения
-logger = my_logger.get_logger(__name__)
+logger = config_logger.get_logger(__name__)
 
 
-# Объект бота
-bot = Bot(TOKEN_API)
-# Диспетчер
-dp = Dispatcher()
-
-
-# Хэндлер на команду /start
-@dp.message(Command("start"))
-async def cmd_start(message: types.Message):
-    await message.answer("Hello!")
-
-
-# Запуск процесса поллинга новых апдейтов
 async def main():
+    # Объект бота
+    bot = Bot(token=config.bot_token.get_secret_value(), parse_mode="HTML")
+    # Диспетчер
+    dp = Dispatcher()
     logger.info("The bot is running")
     logger.root.setLevel(logging.INFO)
-    # package1.process(msg="сообщение")
+    dp.include_routers(questions.router, different_types.router)
+
+    # Альтернативный вариант регистрации роутеров по одному на строку
+    # dp.include_router(questions.router)
+    # dp.include_router(different_types.router)
+
+    # Запускаем бота и пропускаем все накопленные входящие
+    # Да, этот метод можно вызвать даже если у вас поллинг
+    await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)
+
+    # package1.process(msg="сообщение")
+
     logger.info("The bot has been stopped")
 
 
