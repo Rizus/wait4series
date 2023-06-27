@@ -1,0 +1,32 @@
+@startuml
+
+skinparam backgroundColor #F0FFFF
+skinparam handwritten true
+
+actor Client #Maroon
+entity Bot #green
+database DB #Olive
+entity Website #Sienna
+
+hnote over Client #lime : Старт сессии
+Client -[#red]> Bot : Запрос \nавторизации
+activate Bot #red
+activate Client #red
+Bot -[#blue]> Client : Форма \nавторизации
+Client -[#green]> Bot : Регистрационные \nданные
+deactivate Client
+Bot -[#green]-> DB : Сохранение \nданных
+deactivate Bot
+Bot -[#green]> Client: Статус 'OK'
+Client -[#red]> Bot : Запрос на поиск \nконтента
+Bot -[#red]-> Website : Парсинг сайта
+activate Bot #red
+hnote over Bot, Website #aqua : Обработка
+Bot -[#green]-> DB : Сохранение \nданных
+deactivate Bot
+Bot -[#blue]-> Client : Запрос на подтверждение \nнайденого контента
+Client -[#green]> Bot : ответ 'YES or NO'
+Bot <-[#orange]-> Client : Повтор если 'NO'
+hnote over Client, Bot #lime : Конец сессии
+
+@enduml
