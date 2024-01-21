@@ -5,7 +5,7 @@ from aiogram.types import BotCommand, BotCommandScopeDefault
 async def get_bot_commands(bot: Bot):
     commands = [
         BotCommand(command="find", description="Найти сериал"),
-        BotCommand(command="cancel", description="Отмена"),
+        BotCommand(command="my_series", description="Мои сериалы"),
         BotCommand(command="help", description="Помощь"),
     ]
 
